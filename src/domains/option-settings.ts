@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+
+export type Difficulty = 'None';
+export type DeathPenalty = 'None' | 'Item' | 'ItemAndEquipment' | 'All';
+export type Platform = 'Steam' | 'Xbox';
+export type LogFormatType = 'Text' | 'Json';
 type Float = number;
 type Integer = number;
-type Difficulty = 'None';
-type DeathPenalty = 'None' | 'Item' | 'ItemAndEquipment' | 'All';
-type Platform = 'Steam' | 'Xbox';
-type LogFormatType = 'Text' | 'Json';
 
 export default interface OptionSettings {
   Difficulty: Difficulty;
@@ -79,8 +81,8 @@ export default interface OptionSettings {
   LogFormatType: LogFormatType;
 }
 
-export type OptionName = keyof OptionSettings;
-export const OptionNames: OptionName[] = [
+export type OptionSettingsKey = keyof OptionSettings;
+export const OptionSettingsKeys: OptionSettingsKey[] = [
   'Difficulty',
   'DayTimeSpeedRate',
   'NightTimeSpeedRate',
@@ -153,3 +155,77 @@ export const OptionNames: OptionName[] = [
   'bIsUseBackupSaveData',
   'LogFormatType',
 ];
+
+export const Default: OptionSettings = {
+  Difficulty: 'None',
+  DayTimeSpeedRate: 1,
+  NightTimeSpeedRate: 1,
+  ExpRate: 1,
+  PalCaptureRate: 1,
+  PalSpawnNumRate: 1,
+  PalDamageRateAttack: 1,
+  PalDamageRateDefense: 1,
+  PlayerDamageRateAttack: 1,
+  PlayerDamageRateDefense: 1,
+  PlayerStomachDecreaceRate: 1,
+  PlayerStaminaDecreaceRate: 1,
+  PlayerAutoHPRegeneRate: 1,
+  PlayerAutoHpRegeneRateInSleep: 1,
+  PalStomachDecreaceRate: 1,
+  PalStaminaDecreaceRate: 1,
+  PalAutoHPRegeneRate: 1,
+  PalAutoHpRegeneRateInSleep: 1,
+  BuildObjectDamageRate: 1,
+  BuildObjectDeteriorationDamageRate: 1,
+  CollectionDropRate: 1,
+  CollectionObjectHpRate: 1,
+  CollectionObjectRespawnSpeedRate: 1,
+  EnemyDropItemRate: 1,
+  DeathPenalty: 'All',
+  bEnablePlayerToPlayerDamage: false,
+  bEnableFriendlyFire: false,
+  bEnableInvaderEnemy: true,
+  bActiveUNKO: false,
+  bEnableAimAssistPad: true,
+  bEnableAimAssistKeyboard: false,
+  DropItemMaxNum: 3000,
+  DropItemMaxNum_UNKO: 100,
+  BaseCampMaxNum: 128,
+  BaseCampWorkerMaxNum: 15,
+  DropItemAliveMaxHours: 1,
+  bAutoResetGuildNoOnlinePlayers: false,
+  AutoResetGuildTimeNoOnlinePlayers: 72,
+  GuildPlayerMaxNum: 20,
+  BaseCampMaxNumInGuild: 4,
+  PalEggDefaultHatchingTime: 72,
+  WorkSpeedRate: 1,
+  AutoSaveSpan: 30,
+  bIsMultiplay: false,
+  bIsPvP: false,
+  bCanPickupOtherGuildDeathPenaltyDrop: false,
+  bEnableNonLoginPenalty: true,
+  bEnableFastTravel: true,
+  bIsStartLocationSelectByMap: true,
+  bExistPlayerAfterLogout: false,
+  bEnableDefenseOtherGuildPlayer: false,
+  bInvisibleOtherGuildBaseCampAreaFX: false,
+  CoopPlayerMaxNum: 4,
+  ServerPlayerMaxNum: 32,
+  ServerName: 'Default Palworld Server',
+  ServerDescription: '',
+  AdminPassword: '',
+  ServerPassword: '',
+  PublicPort: 8211,
+  PublicIP: '',
+  RCONEnabled: false,
+  RCONPort: 25575,
+  Region: '',
+  bUseAuth: true,
+  BanListURL: 'https://api.palworldgame.com/api/banlist.txt',
+  RESTAPIEnabled: false,
+  RESTAPIPort: 8212,
+  bShowPlayerList: false,
+  AllowConnectPlatform: 'Steam',
+  bIsUseBackupSaveData: true,
+  LogFormatType: 'Text',
+};

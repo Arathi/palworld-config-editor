@@ -1,22 +1,38 @@
 import { HTMLAttributes, useState } from 'react';
-import { Grid, Input, Slider } from '@arco-design/web-react';
-import Flex from '../flex';
-import OptionSettings from '@/domains/option-settings'; // defaultOptionSettings as DefaultOptionSettings,
-import ScriptTextArea, {
-  Interface,
-  Schema,
-} from '@/routes/generator/script-text-area';
+import { Input } from '@arco-design/web-react';
+import items from './items';
+import Flex from '@/components/flex';
+import Form from '@/components/form';
+import OptionSettings, {
+  Default as DefaultOptionSettings,
+} from '@/domains/option-settings';
 
 type Props = HTMLAttributes<HTMLDivElement>;
 
-const Editor: React.FC<Props> = ({}) => {
-  const [optionSettings, setOptionSettings] = useState<OptionSettings>();
+const Editor: React.FC<Props> = ({ style }) => {
+  const [optionSettings, setOptionSettings] = useState<OptionSettings>(
+    DefaultOptionSettings,
+  );
 
   return (
-    <Flex direction="row" style={{ margin: 8 }} gap={8}>
-      <Flex direction="column" flex={1}>
-        <Input />
+    <Flex
+      direction="row"
+      gap={8}
+      style={{ margin: 8, height: '100%', ...style }}
+    >
+      <Flex direction="column" flex={3} style={{ overflowY: 'hidden' }}>
+        <Form
+          initialData={optionSettings}
+          items={items}
+          onChange={patch => {
+            setOptionSettings({
+              ...optionSettings,
+              ...patch,
+            });
+          }}
+        />
       </Flex>
+      <Input.TextArea autoSize={true} style={{ flex: 1, height: '100%' }} />
     </Flex>
   );
 };

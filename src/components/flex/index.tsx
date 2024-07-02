@@ -18,6 +18,7 @@ const Flex: React.FC<Props> = ({
   flex,
   style,
   children,
+  onClick,
 }) => {
   return (
     <div
@@ -31,6 +32,7 @@ const Flex: React.FC<Props> = ({
         flex,
         ...style,
       }}
+      onClick={onClick}
     >
       {children}
     </div>

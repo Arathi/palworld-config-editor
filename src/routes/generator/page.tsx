@@ -1,19 +1,13 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import {
   Input,
-  InputProps,
   Table,
   TableColumnProps,
   TextAreaProps,
 } from '@arco-design/web-react';
-import ScriptTextArea, {
-  Schema,
-  Enum,
-  Type,
-  Interface,
-  Const,
-} from './script-text-area';
+import ScriptTextArea, { Schema } from '@/components/script-text-area';
 import Flex from '@/components/flex';
+import items from '@/components/editor/items';
 
 const OptionSettingsPattern =
   /\[\/Script\/Pal\.PalGameWorldSettings\]\nOptionSettings=\((.*)\)/;
@@ -21,16 +15,13 @@ const OptionSettingsPattern =
 const IntegerPattern = /^\d+$/;
 const FloatPattern = /^\d+\.\d{6}$/;
 
-type FieldType =
-  | 'Error'
+type ValueType =
+  | 'unknown'
   | 'string'
+  | 'boolean'
   | 'Integer'
   | 'Float'
-  | 'boolean'
-  | 'Difficulty'
-  | 'DeathPenalty'
-  | 'Platform'
-  | 'LogFormatType';
+  | string;
 
 interface Field {
   /**
@@ -41,7 +32,7 @@ interface Field {
   /**
    * 类型
    */
-  type: FieldType;
+  type: string;
 
   /**
    * 默认值
@@ -57,56 +48,54 @@ interface Field {
 const Page = () => {
   const [settings, setSettings] = useState('');
 
-  // const settingsStatus = useMemo<InputProps['status']>(() => {
-  //   const matcher = OptionSettingsPattern.exec(settings);
-  //   if (matcher === null) {
-  //     return 'error';
-  //   }
-  //   return undefined;
-  // }, [settings]);
-
   const schemas: Schema[] = [];
 
   schemas.push({
     name: 'Difficulty',
+    export: true,
     type: 'type',
     types: ['"None"'],
-  } as Type);
+  });
 
   schemas.push({
     name: 'DeathPenalty',
+    export: true,
     type: 'type',
     types: ['"None"', '"Item"', '"ItemAndEquipment"', '"All"'],
-  } as Type);
+  });
 
   schemas.push({
     name: 'Platform',
+    export: true,
     type: 'type',
     types: ['"Steam"', '"Xbox"'],
-  } as Type);
+  });
 
   schemas.push({
     name: 'LogFormatType',
+    export: true,
     type: 'type',
     types: ['"Text"', '"Json"'],
-  } as Type);
+  });
 
   schemas.push({
     name: 'Float',
     type: 'type',
     types: ['number'],
-  } as Type);
+  });
 
   schemas.push({
     name: 'Integer',
     type: 'type',
     types: ['number'],
-  } as Type);
+  });
 
   let settingsStatus: TextAreaProps['status'];
   const matcher = OptionSettingsPattern.exec(settings);
   const optionSettingsProperties: Record<string, string> = {};
   const optionSettingsKeys: string[] = [];
+  const defaultValue: Record<string, any> = {};
+
   if (matcher === null) {
     console.warn(`无效的`);
     settingsStatus = 'error';
@@ -117,14 +106,31 @@ const Page = () => {
       const key = pair.substring(0, eqIndex);
       const value = pair.substring(eqIndex + 1);
       const valueType = parseValueType(key, value);
+      let jsv: string | number | boolean | null = null;
+      switch (valueType) {
+        case 'string':
+          jsv = value.substring(1, value.length - 1);
+          break;
+        case 'boolean':
+          jsv = value === 'True';
+          break;
+        case 'Integer':
+        case 'Float':
+          jsv = Number(value);
+          break;
+        default:
+          jsv = value;
+          break;
+      }
       if (valueType !== null) {
         optionSettingsProperties[key] = valueType;
         optionSettingsKeys.push(key);
+        defaultValue[key] = jsv;
       }
     });
   }
 
-  function parseValueType(key: string, value: string): string {
+  function parseValueType(key: string, value: string): ValueType {
     if (value.startsWith('"') && value.startsWith('"')) {
       return 'string';
     }
@@ -148,146 +154,54 @@ const Page = () => {
         return key;
       case 'AllowConnectPlatform':
         return 'Platform';
+      default:
+        return 'unknown';
     }
-
-    return 'unknown';
   }
 
   schemas.push({
     name: 'OptionSettings',
+    export: true,
     type: 'interface',
     properties: optionSettingsProperties,
-  } as Interface);
+  });
 
   schemas.push({
     name: 'OptionSettingsKey',
+    export: true,
     type: 'type',
     types: ['keyof OptionSettings'],
-  } as Type);
+  });
 
   schemas.push({
     name: 'OptionSettingsKeys',
+    export: true,
     type: 'const',
     valueType: 'OptionSettingsKey[]',
-    value: JSON.stringify(optionSettingsKeys),
-  } as Const);
+    value: JSON.stringify(optionSettingsKeys, null, '  '),
+  });
 
-  const fields = useMemo<Array<Field>>(() => {
-    const data: Array<Field> = [];
-    const matcher = OptionSettingsPattern.exec(settings);
-    if (matcher !== null) {
-      const values = matcher[1];
-      const list = values.split(',');
-      list.forEach(v => {
-        const eqIndex = v.indexOf('=');
-        const fieldName = v.substring(0, eqIndex);
-        const value = v.substring(eqIndex + 1);
+  schemas.push({
+    name: 'Default',
+    export: true,
+    type: 'const',
+    valueType: 'OptionSettings',
+    value: JSON.stringify(defaultValue, null, '  '),
+  });
 
-        let type: FieldType = 'Error';
-        let convertedValue: string | boolean | number | null = null;
-        const description: string | undefined = undefined;
-
-        do {
-          switch (fieldName) {
-            case 'Difficulty':
-            case 'DeathPenalty':
-            case 'LogFormatType':
-              type = fieldName;
-              convertedValue = value;
-              break;
-            case 'AllowConnectPlatform':
-              type = 'Platform';
-              convertedValue = value;
-              break;
-            default:
-              // Boolean
-              switch (value) {
-                case 'False':
-                  type = 'boolean';
-                  convertedValue = false;
-                  break;
-                case 'True':
-                  type = 'boolean';
-                  convertedValue = true;
-                  break;
-              }
-
-              // Number
-              const numValue = parseInt(value);
-              if (!isNaN(numValue)) {
-                convertedValue = numValue;
-              }
-
-              let numberMatcher = IntegerPattern.exec(value);
-              if (numberMatcher !== null) {
-                // Integer
-                type = 'Integer';
-                break;
-              }
-
-              numberMatcher = FloatPattern.exec(value);
-              if (numberMatcher !== null) {
-                // Float
-                type = 'Float';
-                break;
-              }
-
-              if (value.startsWith('"') && value.endsWith('"')) {
-                type = 'string';
-                convertedValue = value.substring(1, value.length - 1);
-              }
-          }
-        } while (false);
-
-        data.push({
-          name: fieldName,
-          type,
-          defaultValue: convertedValue,
-          description,
-        });
-      });
-    }
-    return data;
-  }, [settings]);
-
-  /*
-  const script: string = useMemo<string>(() => {
-    let lines: string[] = [];
-    lines.push('type Float = number;');
-    lines.push('type Integer = number;');
-    lines.push('type Difficulty = "None";');
-    lines.push(
-      'type DeathPenalty = "None" | "Item" | "ItemAndEquipment" | "All";',
-    );
-    lines.push('type Platform = "Steam" | "Xbox";');
-    lines.push('type LogFormatType = "Text" | "Json";');
-    lines.push('');
-
-    lines.push('export default interface OptionSettings {');
-
-    const optionNames: string[] = [];
-    fields.forEach(field => {
-      lines.push(`  ${field.name}: ${field.type};`);
-      optionNames.push(field.name);
-    });
-    lines.push('}');
-    lines.push('');
-
-    lines.push('export type OptionName = keyof OptionSettings;');
-    lines.push(`export const OptionNames: OptionName[] = [`);
-    optionNames.forEach(optName => {
-      lines.push(`  "${optName}",`);
-    });
-    lines.push('];');
-    lines.push('');
-
-    lines.push('export const defaultOptionSettings: OptionSettings = {');
-
-    lines.push('};');
-
-    return lines.join('\n');
-  }, [fields]);
-  */
+  const fields: Field[] = [];
+  for (const key in optionSettingsProperties) {
+    const fieldDefaultValue = defaultValue[key];
+    const item = items.find(item => item.key === key);
+    const description = `${item?.label}`;
+    const field = {
+      name: key,
+      type: optionSettingsProperties[key],
+      defaultValue: fieldDefaultValue,
+      description,
+    };
+    fields.push(field);
+  }
 
   const columns: TableColumnProps<Field>[] = [
     {
@@ -335,7 +249,7 @@ const Page = () => {
           border
           borderCell
         />
-        <ScriptTextArea schemas={schemas} />
+        <ScriptTextArea schemas={schemas} style={{ flex: 1 }} />
       </Flex>
     </Flex>
   );
