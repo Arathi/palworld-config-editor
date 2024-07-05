@@ -4,7 +4,7 @@ import Flex from '@/components/flex';
 const ColorGray = '#757C81';
 const ColorActivatedBackground = '#0A6490';
 const ColorActivatedUnderline = '#03B1E7';
-const ColorActivatedText = '#ffffff';
+const ColorActivatedText = '#FFFFFF';
 
 interface SwitchProps {
   initialValue?: boolean;

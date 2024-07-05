@@ -1,40 +1,40 @@
 /* eslint-disable react/no-unused-prop-types */
 
 import { useState } from 'react';
+import Flex from '@/components/flex';
 import Slider from './slider';
 import Select from './select';
 import Switch from './switch';
-import Flex from '@/components/flex';
 
-export declare type FormItemAttrs =
+export type FormItemAttrs =
   | NumberItemAttrs
   | StringItemAttrs
   | SliderItemAttrs
   | SelectItemAttrs
   | SwitchItemAttrs;
 
-declare interface BasicItemAttrs {
+interface BasicItemAttrs {
   key: string;
   label: React.ReactNode;
   description?: React.ReactNode;
 }
 
-declare interface NumberItemAttrs extends BasicItemAttrs {
+interface NumberItemAttrs extends BasicItemAttrs {
   type: 'number';
 }
 
-declare interface StringItemAttrs extends BasicItemAttrs {
+interface StringItemAttrs extends BasicItemAttrs {
   type: 'string';
 }
 
-declare interface SliderItemAttrs extends BasicItemAttrs {
+interface SliderItemAttrs extends BasicItemAttrs {
   type: 'slider';
   min?: number;
   max?: number;
   step?: number;
 }
 
-declare interface SelectItemAttrs extends BasicItemAttrs {
+interface SelectItemAttrs extends BasicItemAttrs {
   type: 'select';
   options: {
     value: string | number;
@@ -42,7 +42,7 @@ declare interface SelectItemAttrs extends BasicItemAttrs {
   }[];
 }
 
-declare interface SwitchItemAttrs extends BasicItemAttrs {
+interface SwitchItemAttrs extends BasicItemAttrs {
   type: 'switch';
   labels: [string, string];
 }

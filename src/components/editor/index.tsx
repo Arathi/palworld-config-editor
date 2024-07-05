@@ -7,9 +7,9 @@ import OptionSettings, {
   Default as DefaultOptionSettings,
 } from '@/domains/option-settings';
 
-type Props = HTMLAttributes<HTMLDivElement>;
+interface EditorProps extends HTMLAttributes<HTMLDivElement> {}
 
-const Editor: React.FC<Props> = ({ style }) => {
+const Editor: React.FC<EditorProps> = ({ style }) => {
   const [optionSettings, setOptionSettings] = useState<OptionSettings>(
     DefaultOptionSettings,
   );

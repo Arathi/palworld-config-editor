@@ -28,22 +28,6 @@ export default function Slider({
     return (value * 100) / delta;
   }, [value, min, max]);
 
-  // const right = useMemo(() => 100 - percent, [percent]);
-
-  // const slider = (
-  //   <input
-  //     value={value}
-  //     type="range"
-  //     onChange={e => {
-  //       const value = parseInt(e.currentTarget.value);
-  //       setValue(value);
-  //       if (onChange !== undefined) {
-  //         onChange(value);
-  //       }
-  //     }}
-  //   />
-  // );
-
   // TODO 监听滚轮上事件
   function increase() {
     let changed = value + step;

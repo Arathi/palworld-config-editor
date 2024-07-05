@@ -1,6 +1,6 @@
 import { CSSProperties, HTMLAttributes } from 'react';
 
-interface Props extends HTMLAttributes<HTMLDivElement> {
+interface FlexProps extends HTMLAttributes<HTMLDivElement> {
   direction?: CSSProperties['flexDirection'];
   wrap?: CSSProperties['flexWrap'];
   justify?: CSSProperties['justifyContent'];
@@ -9,7 +9,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
   flex?: CSSProperties['flex'];
 }
 
-const Flex: React.FC<Props> = ({
+const Flex: React.FC<FlexProps> = ({
   direction,
   wrap,
   justify,

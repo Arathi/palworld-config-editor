@@ -1,6 +1,6 @@
 import { Input, TextAreaProps } from '@arco-design/web-react';
 
-interface Props extends TextAreaProps {
+interface ScriptTextAreaProps extends TextAreaProps {
   schemas: Array<Schema>;
 }
 
@@ -33,7 +33,10 @@ export interface Const extends BasicSchema {
 
 export type Schema = Enum | Type | Interface | Const;
 
-export default function ScriptTextArea({ schemas, style }: Props) {
+export default function ScriptTextArea({
+  schemas,
+  style,
+}: ScriptTextAreaProps) {
   const lines: string[] = [];
   schemas.forEach(schema => {
     switch (schema.type) {
